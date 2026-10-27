@@ -11,6 +11,7 @@ import { TicTacToe } from './games/TicTacToe';
 import { WhackMonkey } from './games/WhackMonkey';
 import { WordSearch } from './games/WordSearch';
 import { Zoo2048 } from './games/Zoo2048';
+import { HairlineGiraffe } from './hairline/HairlineGiraffe';
 import { MemoryGame } from './MemoryGame';
 import './games/games.css';
 
@@ -74,7 +75,10 @@ export function MiniGames({ xp, vocab }: { xp: number; vocab: VocabItem[] }) {
   if (!game) {
     return (
       <div>
-        <p>Such dir ein Spiel aus! Hier gibt es keine Punkte und keine XP – einfach durchatmen.</p>
+        <div className="pause-hero">
+          <HairlineGiraffe />
+          <p>Such dir ein Spiel aus! Hier gibt es keine Punkte und keine XP – einfach durchatmen. Und die Giraffe schaut dahin, wo deine Maus ist. 🦒</p>
+        </div>
         <GameGallery xp={xp} onPick={setGame} />
         {next && (
           <p className="muted small">

@@ -668,3 +668,30 @@
     transition: none !important;
   }
 }
+
+/* ---------------------------------------------------------------- hairline giraffe */
+
+.pause-hero {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 8px 16px;
+  margin: 12px 0;
+}
+
+.pause-hero .hairline-giraffe {
+  flex: 0 0 min(300px, 45%);
+}
+
+@media (max-width: 560px) {
+  .pause-hero {
+    flex-direction: column;
+  }
+  .pause-hero .hairline-giraffe {
+    width: 100%;
+    max-width: 320px;
+  }
+}
