@@ -4,6 +4,7 @@ import { answerCard, boxCounts, dueCards, fullDeck, today } from '../lib/leitner
 import { canScramble, vocabMcEnDe, vocabScramble, vocabTypeDeEn, type Question } from '../lib/questions';
 import { checkLearnBadges } from '../lib/results';
 import { BADGES, LEARN_MIN_ANSWERS, XP_LEARN_CORRECT, XP_LEARN_ROUND } from '../lib/rewards';
+import { boostXp, perksOf } from '../lib/pirates';
 import { activeUnit, useStore } from '../lib/store';
 import { formatClock, useNow } from '../lib/useNow';
 
@@ -27,6 +28,8 @@ export function LearnScreen({ onHome }: { onHome: () => void }) {
   const [stats, setStats] = useState({ answers: 0, right: 0, xp: 0 });
   const [finished, setFinished] = useState<null | { badges: string[]; bonus: number }>(null);
   const answeredOnce = useRef(new Set<string>());
+  const perks = perksOf(state.equipped);
+  const perRight = boostXp(XP_LEARN_CORRECT, perks, true);
 
   const now = useNow(!finished);
   const left = startedAt + minutes * 60_000 - now;
@@ -37,7 +40,7 @@ export function LearnScreen({ onHome }: { onHome: () => void }) {
 
   const end = (answers: number) => {
     const newOnes: string[] = [];
-    const bonus = answers >= LEARN_MIN_ANSWERS ? XP_LEARN_ROUND : 0;
+    const bonus = answers >= LEARN_MIN_ANSWERS ? boostXp(XP_LEARN_ROUND, perks, true) : 0;
     const learnDays = answers > 0 && !state.learnDays.includes(today()) ? [...state.learnDays, today()] : state.learnDays;
     const badges = { ...state.badges };
     const next = { ...state, learnDays, badges, xp: state.xp + bonus };
@@ -108,14 +111,14 @@ export function LearnScreen({ onHome }: { onHome: () => void }) {
                 const d = fullDeck(unit.vocab, s.decks[unit.id] ?? {});
                 return {
                   ...s,
-                  xp: s.xp + (g.correct ? XP_LEARN_CORRECT : 0),
+                  xp: s.xp + (g.correct ? perRight : 0),
                   decks: { ...s.decks, [unit.id]: { ...d, [key]: answerCard(d[key], g.correct) } },
                 };
               });
               setStats((st) => ({
                 answers: st.answers + 1,
                 right: st.right + (g.correct ? 1 : 0),
-                xp: st.xp + (g.correct ? XP_LEARN_CORRECT : 0),
+                xp: st.xp + (g.correct ? perRight : 0),
               }));
             }
             // Wrong cards come back once more at the end of the round.

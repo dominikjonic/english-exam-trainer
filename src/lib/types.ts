@@ -2,6 +2,7 @@ import type { Topic, Unit } from '../data/types';
 import type { Grade, GradeThresholds } from './grading';
 import type { Deck } from './leitner';
 import type { WeakMap } from './exam';
+import type { Slot } from './pirates';
 
 export interface Stat {
   right: number;
@@ -37,12 +38,16 @@ export interface ExamResult {
   mistakes: MistakeRecord[];
   xp: number;
   newBadges: string[];
+  /** Extra questions from the second-chance perk: how many were asked and how many points they won back. */
+  bonus?: { asked: number; recovered: number };
 }
 
 export interface Settings {
   thresholds: GradeThresholds;
   pin: string | null;
   learnMinutes: number;
+  /** Whether exams that used extra questions count for the goal (two grade 1 in a row). */
+  goalWithBonus: boolean;
 }
 
 export interface AppState {
@@ -56,4 +61,10 @@ export interface AppState {
   badges: Record<string, string>;
   learnDays: string[];
   settings: Settings;
+  /** Chosen pirate hero, null until the learner picks one. */
+  heroId: string | null;
+  /** Gold spent on skins; gold = xp − goldSpent. */
+  goldSpent: number;
+  owned: string[];
+  equipped: Record<Slot, string | null>;
 }

@@ -551,6 +551,22 @@ function SettingsTab() {
       </section>
 
       <section>
+        <h3>Skins und Zusatzfragen</h3>
+        <p className="muted small">
+          Mit Hüten aus dem Shop bekommt das Kind nach einer falschen Antwort eine Zusatzfrage. Ist sie richtig, zählt der verlorene Punkt
+          wieder. Das Ergebnis zeigt immer, wie viele Zusatzfragen genutzt wurden.
+        </p>
+        <label className="inline">
+          <input
+            type="checkbox"
+            checked={state.settings.goalWithBonus}
+            onChange={(e) => update((s) => ({ ...s, settings: { ...s.settings, goalWithBonus: e.target.checked } }))}
+          />{' '}
+          Prüfungen mit Zusatzfragen zählen fürs Ziel „zweimal Note 1“
+        </label>
+      </section>
+
+      <section>
         <h3>PIN ändern</h3>
         <div className="row">
           <input type="password" inputMode="numeric" value={newPin} onChange={(e) => setNewPin(e.target.value)} placeholder="Neuer PIN" aria-label="Neuer PIN" />

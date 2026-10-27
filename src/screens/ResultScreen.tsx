@@ -36,8 +36,8 @@ export function MistakeList({ result }: { result: ExamResult }) {
 export function ResultScreen({ result, onHome }: { result: ExamResult; onHome: () => void }) {
   const { state } = useStore();
   const t = state.settings.thresholds;
-  const streak = goalStreak(state.results, result.unitId, t);
-  const goal = meetsGoal(result, t);
+  const streak = goalStreak(state.results, result.unitId, t, state.settings.goalWithBonus);
+  const goal = meetsGoal(result, t, state.settings.goalWithBonus);
   const enDe = pct(result.dirStats['en-de']);
   const deEn = pct(result.dirStats['de-en']);
   const unlocked = newlyUnlocked(state.xp - result.xp, state.xp);
@@ -52,6 +52,13 @@ export function ResultScreen({ result, onHome }: { result: ExamResult; onHome: (
             {result.points} von {result.maxPoints} Punkten · {result.percent} %
           </div>
           <div className="muted small">Dauer {Math.round(result.durationSec / 60)} Minuten</div>
+          {result.bonus && (
+            <div className="muted small">
+              🎩 {result.bonus.asked} Zusatzfrage{result.bonus.asked === 1 ? '' : 'n'}, {result.bonus.recovered} Punkt
+              {result.bonus.recovered === 1 ? '' : 'e'} zurückgeholt
+              {!state.settings.goalWithBonus && ' · zählt nicht fürs Ziel'}
+            </div>
+          )}
         </div>
       </div>
 

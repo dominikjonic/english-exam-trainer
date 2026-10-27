@@ -13,7 +13,7 @@ export function HomeScreen({ go }: { go: (screen: 'exam' | 'learn' | 'parent') =
   const due = dueCards(unit.vocab, state.decks[unit.id] ?? {}).length;
   const own = state.results.filter((r) => r.unitId === unit.id);
   const best = own.reduce<(typeof own)[number] | null>((b, r) => (!b || r.percent > b.percent ? r : b), null);
-  const streak = goalStreak(state.results, unit.id, state.settings.thresholds);
+  const streak = goalStreak(state.results, unit.id, state.settings.thresholds, state.settings.goalWithBonus);
 
   return (
     <div className="screen">
