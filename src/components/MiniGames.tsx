@@ -67,9 +67,12 @@ export function GameGallery({ xp, onPick }: { xp: number; onPick?: (g: MiniGameI
   );
 }
 
-/** The break: pick one of the unlocked games. Nothing here is graded and no XP is earned. */
-export function MiniGames({ xp, vocab }: { xp: number; vocab: VocabItem[] }) {
-  const [game, setGame] = useState<MiniGameInfo | null>(null);
+/**
+ * Pick one of the unlocked games, in the exam break or in the arcade.
+ * Nothing here is graded and no XP is earned.
+ */
+export function MiniGames({ xp, vocab, intro, start }: { xp: number; vocab: VocabItem[]; intro?: string; start?: MiniGameInfo }) {
+  const [game, setGame] = useState<MiniGameInfo | null>(start ?? null);
   const next = nextLocked(xp);
 
   if (!game) {
@@ -77,7 +80,7 @@ export function MiniGames({ xp, vocab }: { xp: number; vocab: VocabItem[] }) {
       <div>
         <div className="pause-hero">
           <HairlineGiraffe />
-          <p>Such dir ein Spiel aus! Hier gibt es keine Punkte und keine XP – einfach durchatmen. Und die Giraffe schaut dahin, wo deine Maus ist. 🦒</p>
+          <p>{intro ?? 'Such dir ein Spiel aus! Hier gibt es keine Punkte und keine XP – einfach durchatmen.'} Und die Giraffe schaut dahin, wo deine Maus ist. 🦒</p>
         </div>
         <GameGallery xp={xp} onPick={setGame} />
         {next && (
