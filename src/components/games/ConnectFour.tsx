@@ -42,7 +42,7 @@ export function ConnectFour() {
         {board.flatMap((row, r) =>
           row.map((c, col) => (
             <button key={`${r}-${col}`} className="c4-cell" onClick={() => drop(col)} disabled={!!result || monkeyTurn} aria-label={`Spalte ${col + 1}`}>
-              {c === 'X' ? '🔴' : c === 'O' ? '🟡' : ''}
+              {c && <span className="c4-disc" style={{ ['--rows' as string]: r + 1 }}>{c === 'X' ? '🔴' : '🟡'}</span>}
             </button>
           )),
         )}

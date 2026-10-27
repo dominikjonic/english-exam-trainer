@@ -10,7 +10,7 @@ export function WhackMonkey() {
   const [now, setNow] = useState(0);
   const [score, setScore] = useState(0);
   const [best, setBest] = useState(0);
-  const [hole, setHole] = useState<{ i: number; lion: boolean; id: number } | null>(null);
+  const [hole, setHole] = useState<{ i: number; lion: boolean; id: number; hit?: boolean } | null>(null);
 
   const left = Math.max(0, endsAt - now);
 
@@ -39,14 +39,14 @@ export function WhackMonkey() {
         if (h && i === h.i) i = (i + 1) % HOLES;
         return { i, lion: Math.random() < 0.15, id: (h?.id ?? 0) + 1 };
       });
-    }, hole ? stay : 300);
+    }, hole?.hit ? 350 : hole ? stay : 300);
     return () => clearTimeout(t);
   }, [running, hole, endsAt]);
 
   const hit = (i: number) => {
-    if (!running || !hole || hole.i !== i) return;
+    if (!running || !hole || hole.i !== i || hole.hit) return;
     setScore((s) => Math.max(0, s + (hole.lion ? -3 : 1)));
-    setHole(null);
+    setHole({ ...hole, hit: true });
   };
 
   return (
@@ -59,8 +59,8 @@ export function WhackMonkey() {
         {Array.from({ length: HOLES }, (_, i) => (
           <button key={i} className="whack-hole" onClick={() => hit(i)} aria-label={`Loch ${i + 1}`}>
             {hole?.i === i ? (
-              <span key={hole.id} className="whack-pop">
-                {hole.lion ? '🦁' : '🐒'}
+              <span key={`${hole.id}-${hole.hit}`} className={hole.hit ? 'whack-bonk' : 'whack-pop'}>
+                {hole.hit ? (hole.lion ? '😾' : '💫') : hole.lion ? '🦁' : '🐒'}
               </span>
             ) : (
               ''

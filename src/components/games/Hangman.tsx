@@ -34,7 +34,9 @@ export function Hangman({ vocab }: { vocab: VocabItem[] }) {
       </p>
       <div className="ice">
         <div className="ice-floe" style={{ width: `${30 + ((MAX_WRONG - wrong) / MAX_WRONG) * 70}%` }}>
-          <span className="ice-penguin">{lost ? '💦' : '🐧'}</span>
+          <span key={`${wrong}-${won}-${lost}`} className={`ice-penguin ${lost ? 'sink' : won ? 'cheer' : wrong ? 'wobble' : ''}`}>
+            {lost ? '💦' : '🐧'}
+          </span>
         </div>
       </div>
       <div className="hangman-word">

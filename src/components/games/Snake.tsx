@@ -79,7 +79,7 @@ export function Snake() {
       <div className="snake-board" style={{ gridTemplateColumns: `repeat(${N}, 1fr)` }}>
         {cells.map((c, i) => (
           <div key={i} className={`snake-cell ${c}`}>
-            {c === 'head' ? '🐍' : i === food.y * N + food.x ? '🍌' : ''}
+            {c === 'head' ? <span className="snake-head">🐍</span> : i === food.y * N + food.x ? <span className="pulse">🍌</span> : ''}
           </div>
         ))}
       </div>

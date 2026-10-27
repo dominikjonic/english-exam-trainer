@@ -12,6 +12,7 @@ import { WhackMonkey } from './games/WhackMonkey';
 import { WordSearch } from './games/WordSearch';
 import { Zoo2048 } from './games/Zoo2048';
 import { MemoryGame } from './MemoryGame';
+import './games/games.css';
 
 function renderGame(id: string, vocab: VocabItem[]): ReactNode {
   switch (id) {

@@ -42,7 +42,13 @@ export function Zoo2048() {
       <div className="zoo-grid">
         {grid.flat().map((v, i) => (
           <div key={i} className={`zoo-tile level-${Math.min(v, 10)}`}>
-            {v ? (ZOO_TILES[v - 1] ?? '⭐') : ''}
+            {v ? (
+              <span key={v} className="pop-in">
+                {ZOO_TILES[v - 1] ?? '⭐'}
+              </span>
+            ) : (
+              ''
+            )}
           </div>
         ))}
       </div>

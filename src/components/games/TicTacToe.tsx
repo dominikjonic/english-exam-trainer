@@ -40,7 +40,7 @@ export function TicTacToe() {
       <div className="ttt-grid">
         {board.map((c, i) => (
           <button key={i} className="ttt-cell" onClick={() => play(i)} disabled={!!c || !!result || lionTurn}>
-            {c === 'X' ? '🐵' : c === 'O' ? '🦁' : ''}
+            {c && <span className={`pop-in ${result === c ? 'cheer' : ''}`}>{c === 'X' ? '🐵' : '🦁'}</span>}
           </button>
         ))}
       </div>

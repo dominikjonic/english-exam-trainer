@@ -85,7 +85,9 @@ export function SimonParrot() {
             disabled={phase !== 'input'}
             aria-label={p.name}
           >
-            {p.emoji}
+            <span key={lit === i ? `lit-${seq.length}-${pos}` : 'off'} className={lit === i ? 'cheer' : ''}>
+              {p.emoji}
+            </span>
           </button>
         ))}
       </div>

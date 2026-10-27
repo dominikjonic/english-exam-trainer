@@ -24,7 +24,7 @@ export function SlidePuzzle() {
         Klick auf ein Tier neben der Lücke, um es zu schieben. · Züge: <b>{moves}</b>
       </p>
       <div className="slide-layout">
-        <div className="slide-grid">
+        <div className={`slide-grid ${solved ? 'dance' : ''}`}>
           {tiles.map((t, i) => (
             <button key={t} className={`slide-tile ${t ? '' : 'gap'}`} style={{ order: i }} onClick={() => move(i)} disabled={!t}>
               {FACES[t]}

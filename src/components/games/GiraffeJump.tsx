@@ -81,7 +81,7 @@ export function GiraffeJump() {
       </p>
       <div className="jump-scene" onPointerDown={jump} role="button" aria-label="Springen">
         <span className="jump-giraffe" style={{ left: GIRAFFE_X, bottom: 20 + g.y }}>
-          🦒
+          <span className={state === 'run' ? (g.y > 1 ? 'leap' : 'trot') : state === 'over' ? 'dizzy' : ''}>🦒</span>
         </span>
         {g.obstacles.map((o, i) => (
           <span key={i} className="jump-obstacle" style={{ left: o.x, bottom: 20, fontSize: o.h, lineHeight: 1 }}>
