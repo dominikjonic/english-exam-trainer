@@ -1,6 +1,7 @@
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react';
 import { unit2 } from '../data/unit2';
 import { DEFAULT_THRESHOLDS } from './grading';
+import { DEFAULT_EQUIPPED, DEFAULT_OWNED } from './pirates';
 import type { AppState } from './types';
 
 const STORAGE_KEY = 'english-exam-trainer:v1';
@@ -16,7 +17,11 @@ export function defaultState(): AppState {
     xp: 0,
     badges: {},
     learnDays: [],
-    settings: { thresholds: { ...DEFAULT_THRESHOLDS }, pin: null, learnMinutes: 10 },
+    settings: { thresholds: { ...DEFAULT_THRESHOLDS }, pin: null, learnMinutes: 10, goalWithBonus: false },
+    heroId: null,
+    goldSpent: 0,
+    owned: [...DEFAULT_OWNED],
+    equipped: { ...DEFAULT_EQUIPPED },
   };
 }
 
@@ -32,6 +37,7 @@ export function loadState(raw: string | null): AppState {
       ...saved,
       settings: { ...base.settings, ...saved.settings, thresholds: { ...base.settings.thresholds, ...saved.settings?.thresholds } },
     };
+    state.equipped = { ...base.equipped, ...saved.equipped };
     if (!state.units?.length) state.units = base.units;
     if (!state.units.some((u) => u.id === state.activeUnitId)) state.activeUnitId = state.units[0].id;
     return state;
