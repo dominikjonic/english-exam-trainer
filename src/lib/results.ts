@@ -68,7 +68,7 @@ export function finishExam(
     return { id: p.id, title: p.title, points: own.reduce((s, a) => s + a.g.points, 0), max: own.reduce((s, a) => s + a.g.maxPoints, 0) };
   });
 
-  const dirStats = { 'en-de': stat(), 'de-en': stat(), listen: stat() };
+  const dirStats = { 'en-de': stat(), 'de-en': stat() };
   const topicStats: Record<Topic, Stat> = { vocab: stat(), pronouns: stat(), prepositions: stat() };
   const mistakes: MistakeRecord[] = [];
   let spellingErrors = 0;

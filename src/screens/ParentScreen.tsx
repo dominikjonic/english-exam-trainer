@@ -2,7 +2,6 @@ import { useState, type FormEvent } from 'react';
 import { unit2 } from '../data/unit2';
 import type { GrammarTopic, Topic, Unit, VocabItem } from '../data/types';
 import { GRADE_NAMES, validThresholds, type GradeThresholds } from '../lib/grading';
-import { speak } from '../lib/speech';
 import { defaultState, loadState, useStore } from '../lib/store';
 import type { AppState, ExamResult } from '../lib/types';
 import { MistakeList, TOPIC_NAMES } from './ResultScreen';
@@ -182,7 +181,7 @@ function Stats() {
     results.reduce((s, r) => ({ right: s.right + r.topicStats[t].right, total: s.total + r.topicStats[t].total }), { right: 0, total: 0 });
   const mistakes = results.flatMap((r) => r.mistakes);
   const spelling = mistakes.filter((m) => m.spelling).length;
-  const typedTotal = results.reduce((s, r) => s + r.dirStats['de-en'].total + r.dirStats.listen.total, 0);
+  const typedTotal = results.reduce((s, r) => s + r.dirStats['de-en'].total, 0);
 
   const counts = new Map<string, number>();
   // Match tasks cover several words at once, so they are left out here.
@@ -536,7 +535,7 @@ function SettingsTab() {
       </section>
 
       <section>
-        <h3>Lernmodus und Vorlesen</h3>
+        <h3>Lernmodus</h3>
         <label className="inline">
           Dauer einer Lernrunde:{' '}
           <input
@@ -548,20 +547,6 @@ function SettingsTab() {
             onChange={(e) => update((s) => ({ ...s, settings: { ...s.settings, learnMinutes: Math.max(3, Math.min(30, Number(e.target.value) || 10)) } }))}
           />{' '}
           Minuten
-        </label>
-        <label className="inline">
-          Sprechtempo:{' '}
-          <input
-            type="range"
-            min={0.5}
-            max={1.2}
-            step={0.05}
-            value={state.settings.speechRate}
-            onChange={(e) => update((s) => ({ ...s, settings: { ...s.settings, speechRate: Number(e.target.value) } }))}
-          />{' '}
-          <button className="btn small" onClick={() => speak('The parrot is next to the monkeys.', state.settings.speechRate)}>
-            🔊 Testen
-          </button>
         </label>
       </section>
 

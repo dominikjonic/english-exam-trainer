@@ -1,7 +1,7 @@
 import { useMemo, useRef, useState } from 'react';
 import { QuestionView } from '../components/QuestionView';
 import { answerCard, boxCounts, dueCards, fullDeck, today } from '../lib/leitner';
-import { canScramble, vocabDictation, vocabMcEnDe, vocabScramble, vocabTypeDeEn, type Question } from '../lib/questions';
+import { canScramble, vocabMcEnDe, vocabScramble, vocabTypeDeEn, type Question } from '../lib/questions';
 import { checkLearnBadges } from '../lib/results';
 import { BADGES, LEARN_MIN_ANSWERS, XP_LEARN_CORRECT, XP_LEARN_ROUND } from '../lib/rewards';
 import { activeUnit, useStore } from '../lib/store';
@@ -14,7 +14,6 @@ function questionFor(key: string, vocab: ReturnType<typeof activeUnit>['vocab'],
   if (dir === 'en-de') return vocabMcEnDe(v, vocab);
   const r = Math.random();
   if (box <= 1 && canScramble(v) && r < 0.25) return vocabScramble(v);
-  if (r > 0.8) return vocabDictation(v);
   return vocabTypeDeEn(v);
 }
 
@@ -97,7 +96,6 @@ export function LearnScreen({ onHome }: { onHome: () => void }) {
           key={`${q.uid}-${pos}`}
           q={q}
           mode="learn"
-          speechRate={state.settings.speechRate}
           extraSolution={(() => {
             const v = unit.vocab.find((x) => x.id === key.split('|')[0]);
             return v ? `${v.en} = ${v.de}${v.example ? ` · ${v.example}` : ''}` : undefined;
