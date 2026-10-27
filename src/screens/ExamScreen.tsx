@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { MemoryGame } from '../components/MemoryGame';
+import { MiniGames } from '../components/MiniGames';
 import { QuestionView } from '../components/QuestionView';
-import { bossRound, buildPart, EXAM_MINUTES, EXAM_PARTS, type ExamContext, type Mistake } from '../lib/exam';
+import { bossRound, buildPart, EXAM_MINUTES, EXAM_PARTS, retryQuestion, type ExamContext, type Mistake } from '../lib/exam';
+import { Hero } from '../components/hero/Hero';
+import { HEROES, perksOf } from '../lib/pirates';
 import { gradeQuestion, kindLabel, type Graded, type Question } from '../lib/questions';
 import { finishExam, type Answered } from '../lib/results';
 import { activeUnit, useStore } from '../lib/store';
@@ -21,6 +23,11 @@ export function ExamScreen({ onFinish, onCancel }: { onFinish: (r: ExamResult) =
   const [confirmCancel, setConfirmCancel] = useState(false);
   const answered = useRef<Answered[]>([]);
   const currentGraded = useRef(false);
+  // Second-chance perk: extra questions left in this exam, and which tasks are extra ones.
+  const hero = HEROES.find((h) => h.id === state.heroId);
+  const perks = useMemo(() => perksOf(state.equipped), []);
+  const chancesLeft = useRef(perks.secondChances);
+  const bonusIds = useRef(new Set<string>());
   const ctx = useMemo<ExamContext>(() => ({ unit, weak: state.weak[unit.id] ?? {}, used: new Set() }), [unit, state.weak]);
 
   const running = phase.kind === 'run';
@@ -52,13 +59,14 @@ export function ExamScreen({ onFinish, onCancel }: { onFinish: (r: ExamResult) =
     } else setQuestions(buildPart(plan.id, ctx));
     setIndex(0);
     currentGraded.current = false;
-    setPartEndsAt(Date.now() + plan.minutes * 60_000);
+    setPartEndsAt(Date.now() + (plan.minutes + (plan.id === 'pause' ? 0 : perks.extraMinutes)) * 60_000);
     setPhase({ kind: 'run', part: p });
   };
 
   const endPart = (p: number, fromIndex: number) => {
-    // Unanswered tasks count as wrong when the time is up.
+    // Unanswered tasks count as wrong when the time is up; an unanswered extra question just lapses.
     for (const q of questions.slice(fromIndex)) {
+      if (bonusIds.current.has(q.uid)) continue;
       const g: Graded = { ...gradeQuestion(q, null), given: '(keine Zeit mehr)' };
       answered.current.push({ partId: EXAM_PARTS[p].id, q, g });
     }
@@ -109,6 +117,9 @@ export function ExamScreen({ onFinish, onCancel }: { onFinish: (r: ExamResult) =
             <li>Keine Hilfen. Der Timer läuft sichtbar mit.</li>
             <li>Rechtschreibung zählt: Ein Tippfehler ist ein Fehler. Danach siehst du den Unterschied.</li>
             <li>Wenn die Zeit für einen Teil um ist, geht es automatisch weiter.</li>
+            {perks.secondChances > 0 && <li>🎩 Dein Hut: {perks.secondChances} Zusatzfrage(n) nach einer falschen Antwort.</li>}
+            {perks.extraMinutes > 0 && <li>🧭 Dein Mantel: +{perks.extraMinutes} Minute(n) pro Teil.</li>}
+            {perks.xpFactor > 1 && <li>🦜 Dein Papagei: +{Math.round((perks.xpFactor - 1) * 100)} % XP und Gold.</li>}
           </ul>
         </div>
         <div className="row">
@@ -168,6 +179,11 @@ export function ExamScreen({ onFinish, onCancel }: { onFinish: (r: ExamResult) =
       <div className="screen">
         {header}
         <div className="part-intro">
+          {hero && (
+            <div className="intro-hero">
+              <Hero hero={hero} equipped={state.equipped} entrance lines={['Du schaffst das!', 'Konzentriert bleiben!', 'Auf geht’s!']} />
+            </div>
+          )}
           <h2>{part.title}</h2>
           <p>{part.subtitle}</p>
           <p className="muted">Zeit: {part.minutes} Minuten</p>
@@ -184,7 +200,7 @@ export function ExamScreen({ onFinish, onCancel }: { onFinish: (r: ExamResult) =
       <div className="screen">
         {header}
         <h2>Kurze Pause 🌴</h2>
-        <MemoryGame />
+        <MiniGames xp={state.xp} vocab={unit.vocab} />
         <button className="btn primary" onClick={() => goToPart(phase.part + 1)}>
           Pause beenden
         </button>
@@ -203,14 +219,28 @@ export function ExamScreen({ onFinish, onCancel }: { onFinish: (r: ExamResult) =
       </div>
       <div className="muted small">
         Aufgabe {index + 1} von {questions.length}
+        {perks.secondChances > 0 && <> · 🎩 Zusatzfragen übrig: {chancesLeft.current}</>}
       </div>
+      {bonusIds.current.has(q.uid) && (
+        <div className="bonus-banner">🎩 Zusatzfrage! Richtig beantwortet holst du dir den verlorenen Punkt zurück.</div>
+      )}
       <QuestionView
         key={q.uid}
         q={q}
         mode="exam"
         onGraded={(g) => {
           currentGraded.current = true;
-          answered.current.push({ partId: part.id, q, g });
+          const bonus = bonusIds.current.has(q.uid);
+          answered.current.push({ partId: part.id, q, g, ...(bonus ? { bonus } : {}) });
+          // A wrong answer brings an extra question on the same item, while the hat has chances left.
+          if (!g.correct && !bonus && chancesLeft.current > 0) {
+            const extra = retryQuestion(g.wrongKeys[0] ?? q.itemKey, kindLabel(q), unit);
+            if (extra) {
+              chancesLeft.current--;
+              bonusIds.current.add(extra.uid);
+              setQuestions((qs) => [...qs.slice(0, index + 1), extra, ...qs.slice(index + 1)]);
+            }
+          }
         }}
         onNext={() => {
           currentGraded.current = false;

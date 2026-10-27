@@ -1,6 +1,11 @@
 import { Diff } from '../components/Diff';
+import { Confetti } from '../components/hero/Confetti';
+import { Hero } from '../components/hero/Hero';
+import { HEROES } from '../lib/pirates';
+import '../screens/crew.css';
 import { GRADE_NAMES } from '../lib/grading';
 import { BADGES, goalStreak, meetsGoal } from '../lib/rewards';
+import { newlyUnlocked } from '../lib/minigames';
 import { useStore } from '../lib/store';
 import type { ExamResult, Stat } from '../lib/types';
 
@@ -35,13 +40,30 @@ export function MistakeList({ result }: { result: ExamResult }) {
 export function ResultScreen({ result, onHome }: { result: ExamResult; onHome: () => void }) {
   const { state } = useStore();
   const t = state.settings.thresholds;
-  const streak = goalStreak(state.results, result.unitId, t);
-  const goal = meetsGoal(result, t);
+  const streak = goalStreak(state.results, result.unitId, t, state.settings.goalWithBonus);
+  const goal = meetsGoal(result, t, state.settings.goalWithBonus);
   const enDe = pct(result.dirStats['en-de']);
   const deEn = pct(result.dirStats['de-en']);
+  const unlocked = newlyUnlocked(state.xp - result.xp, state.xp);
+  const hero = HEROES.find((h) => h.id === state.heroId);
+  const cheer = result.grade === 1 ? ['Sehr gut! Yo-ho-ho!', 'Ein echter Kapitän!'] : result.grade === 2 ? ['Gut gemacht!', 'Fast perfekt!'] : ['Weiter so!', 'Nächstes Mal mehr!'];
   return (
     <div className="screen">
+      {result.grade <= 2 && <Confetti />}
       <h1>Auswertung</h1>
+      {hero && (
+        <div className="home-hero result-hero">
+          <div className="home-hero-figure">
+            <Hero hero={hero} equipped={state.equipped} entrance lines={cheer} />
+          </div>
+          <div className="home-hero-info">
+            <h2>{cheer[0]}</h2>
+            <div className="coin-pill">
+              +{result.xp} XP · <span className="coin" aria-hidden="true" /> +{result.xp} Gold
+            </div>
+          </div>
+        </div>
+      )}
       <div className={`grade-card grade-${result.grade}`}>
         <div className="grade-number">{result.grade}</div>
         <div>
@@ -50,6 +72,13 @@ export function ResultScreen({ result, onHome }: { result: ExamResult; onHome: (
             {result.points} von {result.maxPoints} Punkten · {result.percent} %
           </div>
           <div className="muted small">Dauer {Math.round(result.durationSec / 60)} Minuten</div>
+          {result.bonus && (
+            <div className="muted small">
+              🎩 {result.bonus.asked} Zusatzfrage{result.bonus.asked === 1 ? '' : 'n'}, {result.bonus.recovered} Punkt
+              {result.bonus.recovered === 1 ? '' : 'e'} zurückgeholt
+              {!state.settings.goalWithBonus && ' · zählt nicht fürs Ziel'}
+            </div>
+          )}
         </div>
       </div>
 
@@ -99,6 +128,11 @@ export function ResultScreen({ result, onHome }: { result: ExamResult; onHome: (
               </div>
             ) : null;
           })}
+          {unlocked.map((g) => (
+            <div key={g.id} className="badge new">
+              {g.emoji} <b>Neues Pausen-Spiel:</b> {g.title}
+            </div>
+          ))}
         </div>
       </div>
 

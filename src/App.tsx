@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import type { ExamResult } from './lib/types';
+import { CrewScreen } from './screens/CrewScreen';
 import { ExamScreen } from './screens/ExamScreen';
 import { HomeScreen } from './screens/HomeScreen';
 import { LearnScreen } from './screens/LearnScreen';
 import { ParentScreen } from './screens/ParentScreen';
 import { ResultScreen } from './screens/ResultScreen';
 
-type Screen = { name: 'home' | 'exam' | 'learn' | 'parent' } | { name: 'result'; result: ExamResult };
+type Screen = { name: 'home' | 'exam' | 'learn' | 'parent' | 'crew' } | { name: 'result'; result: ExamResult };
 
 export function App() {
   const [screen, setScreen] = useState<Screen>({ name: 'home' });
@@ -22,5 +23,7 @@ export function App() {
       return <LearnScreen onHome={home} />;
     case 'parent':
       return <ParentScreen onHome={home} />;
+    case 'crew':
+      return <CrewScreen onHome={home} />;
   }
 }

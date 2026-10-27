@@ -1,0 +1,302 @@
+/* The pirate hero: idle motion, tap reactions, skin changes. */
+
+.hero-wrap {
+  position: relative;
+  width: 100%;
+  max-width: 300px;
+  margin: 0 auto;
+}
+
+.hero-svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  overflow: visible;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.hero-svg * {
+  transform-box: view-box;
+}
+
+.hero-jump {
+  transform-origin: 220px 600px;
+}
+
+.hero-jump.land {
+  animation: hero-land 0.9s cubic-bezier(0.3, 1.4, 0.5, 1) both;
+}
+
+.hero-jump.hop {
+  animation: hero-hop 0.7s cubic-bezier(0.3, 1.2, 0.5, 1);
+}
+
+.hero-breathe {
+  transform-origin: 220px 600px;
+  animation: hero-breathe 3.2s ease-in-out infinite;
+}
+
+.hero-head {
+  transform-origin: 220px 390px;
+  animation: hero-bob 4.4s ease-in-out infinite;
+}
+
+.hero-svg .hero-eye {
+  transform-box: fill-box;
+  transform-origin: 50% 55%;
+  animation: hero-blink 4.8s infinite;
+}
+
+.hero-pupil {
+  transition: transform 0.25s ease-out;
+}
+
+.hero-arm {
+  transform-origin: 288px 452px;
+}
+
+.hero-arm.go {
+  animation: hero-wave 1.6s ease-in-out;
+}
+
+.hero-svg .hero-shadow {
+  transform-box: fill-box;
+  transform-origin: 50% 50%;
+  animation: hero-shadow 3.2s ease-in-out infinite;
+}
+
+.hero-hat {
+  transform-origin: 220px 250px;
+}
+
+.hero-hat.drop {
+  animation: hero-hatdrop 0.6s cubic-bezier(0.3, 1.6, 0.5, 1);
+}
+
+.hero-pet {
+  transform-origin: 140px 430px;
+  animation: hero-perch 2.4s ease-in-out infinite;
+}
+
+.hero-svg .hero-wing {
+  transform-box: fill-box;
+  transform-origin: 85% 15%;
+  animation: hero-flap 2.4s ease-in-out infinite;
+}
+
+.hero-svg .hero-tail {
+  transform-box: fill-box;
+  transform-origin: 90% 0%;
+  animation: hero-perch 1.8s ease-in-out infinite;
+}
+
+.hero-svg .hero-feather {
+  transform-box: fill-box;
+  transform-origin: 10% 90%;
+  animation: hero-perch 3s ease-in-out infinite;
+}
+
+.hero-glint {
+  animation: hero-glint 2.6s ease-in-out infinite;
+}
+
+.hero-bubble {
+  position: absolute;
+  left: 58%;
+  top: 4%;
+  background: #fff;
+  color: #18224a;
+  font-weight: 800;
+  font-size: 1rem;
+  padding: 6px 14px;
+  border-radius: 16px 16px 16px 4px;
+  white-space: nowrap;
+  transform-origin: 0 100%;
+  animation: hero-pop 0.35s cubic-bezier(0.3, 1.6, 0.5, 1);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+  pointer-events: none;
+}
+
+@keyframes hero-land {
+  0% {
+    transform: translateY(-260px) scale(0.9, 1.1);
+  }
+  55% {
+    transform: translateY(0) scale(1.12, 0.86);
+  }
+  75% {
+    transform: translateY(-14px) scale(0.97, 1.04);
+  }
+  100% {
+    transform: none;
+  }
+}
+
+@keyframes hero-hop {
+  20% {
+    transform: scale(1.08, 0.9);
+  }
+  50% {
+    transform: translateY(-70px) scale(0.94, 1.08);
+  }
+  80% {
+    transform: scale(1.06, 0.93);
+  }
+}
+
+@keyframes hero-breathe {
+  50% {
+    transform: scale(1.012, 1.028);
+  }
+}
+
+@keyframes hero-bob {
+  0%,
+  100% {
+    transform: rotate(-2.2deg);
+  }
+  50% {
+    transform: rotate(2.2deg) translateY(2px);
+  }
+}
+
+@keyframes hero-blink {
+  0%,
+  93%,
+  100% {
+    transform: scaleY(1);
+  }
+  95% {
+    transform: scaleY(0.08);
+  }
+}
+
+@keyframes hero-wave {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  15% {
+    transform: rotate(-125deg);
+  }
+  30% {
+    transform: rotate(-100deg);
+  }
+  45% {
+    transform: rotate(-130deg);
+  }
+  60% {
+    transform: rotate(-100deg);
+  }
+  75% {
+    transform: rotate(-120deg);
+  }
+}
+
+@keyframes hero-shadow {
+  50% {
+    transform: scale(0.96);
+  }
+}
+
+@keyframes hero-hatdrop {
+  0% {
+    transform: translateY(-150px) rotate(-14deg);
+    opacity: 0;
+  }
+  60% {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-perch {
+  0%,
+  100% {
+    transform: rotate(0);
+  }
+  30% {
+    transform: rotate(-6deg);
+  }
+  60% {
+    transform: rotate(3deg);
+  }
+}
+
+@keyframes hero-flap {
+  0%,
+  70%,
+  100% {
+    transform: rotate(0);
+  }
+  76% {
+    transform: rotate(-38deg);
+  }
+  82% {
+    transform: rotate(-4deg);
+  }
+  88% {
+    transform: rotate(-30deg);
+  }
+}
+
+@keyframes hero-glint {
+  0%,
+  80%,
+  100% {
+    opacity: 0;
+  }
+  88% {
+    opacity: 1;
+  }
+}
+
+@keyframes hero-pop {
+  from {
+    transform: scale(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-wrap *,
+  .hero-wrap {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+.confetti {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+  z-index: 50;
+}
+
+.confetti span {
+  position: absolute;
+  top: -20px;
+  width: 9px;
+  height: 14px;
+  border-radius: 2px;
+  animation: confetti-fall linear forwards;
+}
+
+.confetti span.round {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+}
+
+@keyframes confetti-fall {
+  to {
+    transform: translate(var(--drift), 105vh) rotate(var(--rot));
+    opacity: 0.6;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .confetti {
+    display: none;
+  }
+}

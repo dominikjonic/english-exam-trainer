@@ -57,17 +57,21 @@ export const BADGES: Badge[] = [
   { id: 'all-words', emoji: '🦁', title: 'Alle Wörter sitzen', description: 'Alle Karten einer Unit mindestens in Fach 3.' },
 ];
 
-/** The success criterion: grade 1, and both translation directions at or above the grade-1 limit. */
-export function meetsGoal(r: ExamResult, t: GradeThresholds): boolean {
+/**
+ * The success criterion: grade 1, and both translation directions at or above the grade-1 limit.
+ * Exams that needed extra questions only count when the parent allows it.
+ */
+export function meetsGoal(r: ExamResult, t: GradeThresholds, withBonus = false): boolean {
   const ok = (s: { right: number; total: number }) => s.total === 0 || (s.right / s.total) * 100 >= t[1];
+  if (!withBonus && (r.bonus?.asked ?? 0) > 0) return false;
   return r.grade === 1 && ok(r.dirStats['en-de']) && ok(r.dirStats['de-en']);
 }
 
 /** Number of results at the end of the list (same unit) that meet the goal in a row. */
-export function goalStreak(results: ExamResult[], unitId: string, t: GradeThresholds): number {
+export function goalStreak(results: ExamResult[], unitId: string, t: GradeThresholds, withBonus = false): number {
   const own = results.filter((r) => r.unitId === unitId);
   let n = 0;
-  for (let i = own.length - 1; i >= 0 && meetsGoal(own[i], t); i--) n++;
+  for (let i = own.length - 1; i >= 0 && meetsGoal(own[i], t, withBonus); i--) n++;
   return n;
 }
 

@@ -5,11 +5,14 @@ import { kindLabel, type Graded, type Question } from './questions';
 import { dayStreak, goalStreak, XP_GRADE_BONUS, XP_NEW_BEST, XP_PER_POINT } from './rewards';
 import type { AppState, ExamResult, MistakeRecord, Stat } from './types';
 import { EXAM_PARTS } from './exam';
+import { boostXp, perksOf } from './pirates';
 
 export interface Answered {
   partId: string;
   q: Question;
   g: Graded;
+  /** An extra question from the second-chance perk: worth no points of its own, a right answer wins back one lost point. */
+  bonus?: boolean;
 }
 
 const stat = (): Stat => ({ right: 0, total: 0 });
@@ -58,14 +61,21 @@ export function finishExam(
   durationSec: number,
 ): { result: ExamResult; state: AppState } {
   const t = state.settings.thresholds;
-  const points = answered.reduce((s, a) => s + a.g.points, 0);
+  const extra = answered.filter((a) => a.bonus);
+  answered = answered.filter((a) => !a.bonus);
+  const lost = answered.reduce((s, a) => s + a.g.maxPoints - a.g.points, 0);
+  const recovered = Math.min(lost, extra.filter((a) => a.g.correct).length);
+  const points = answered.reduce((s, a) => s + a.g.points, 0) + recovered;
   const max = answered.reduce((s, a) => s + a.g.maxPoints, 0);
   const pct = percent(points, max);
   const grade = gradeFor(pct, t);
 
   const parts = EXAM_PARTS.filter((p) => p.id !== 'pause').map((p) => {
     const own = answered.filter((a) => a.partId === p.id);
-    return { id: p.id, title: p.title, points: own.reduce((s, a) => s + a.g.points, 0), max: own.reduce((s, a) => s + a.g.maxPoints, 0) };
+    const won = extra.filter((a) => a.partId === p.id && a.g.correct).length;
+    const pts = own.reduce((s, a) => s + a.g.points, 0);
+    const mx = own.reduce((s, a) => s + a.g.maxPoints, 0);
+    return { id: p.id, title: p.title, points: Math.min(mx, pts + won), max: mx };
   });
 
   const dirStats = { 'en-de': stat(), 'de-en': stat() };
@@ -114,7 +124,7 @@ export function finishExam(
   const previous = state.results.filter((r) => r.unitId === unit.id);
   const best = previous.reduce((m, r) => Math.max(m, r.percent), -1);
   const isNewBest = previous.length > 0 && pct > best;
-  const xp = points * XP_PER_POINT + XP_GRADE_BONUS[grade] + (isNewBest ? XP_NEW_BEST : 0);
+  const xp = boostXp(points * XP_PER_POINT + XP_GRADE_BONUS[grade] + (isNewBest ? XP_NEW_BEST : 0), perksOf(state.equipped));
 
   const result: ExamResult = {
     id: `exam-${Date.now()}`,
@@ -133,6 +143,7 @@ export function finishExam(
     mistakes,
     xp,
     newBadges: [],
+    ...(extra.length ? { bonus: { asked: extra.length, recovered } } : {}),
   };
 
   const badges = { ...state.badges };
@@ -142,7 +153,7 @@ export function finishExam(
   if (isNewBest) grant(badges, 'new-best', newOnes);
   const perfect = (id: string) => {
     const p = parts.find((x) => x.id === id);
-    return !!p && p.max > 0 && p.points === p.max;
+    return !!p && p.max > 0 && p.points === p.max && !extra.some((a) => a.partId === id);
   };
   if (perfect('A')) grant(badges, 'spelling-star', newOnes);
   if (perfect('B') && unit.grammar.includes('pronouns')) grant(badges, 'pronoun-pro', newOnes);
@@ -150,7 +161,7 @@ export function finishExam(
   if (perfect('D')) grant(badges, 'boss', newOnes);
 
   const results = [...state.results, result];
-  if (goalStreak(results, unit.id, state.settings.thresholds) >= 2) grant(badges, 'goal', newOnes);
+  if (goalStreak(results, unit.id, state.settings.thresholds, state.settings.goalWithBonus) >= 2) grant(badges, 'goal', newOnes);
 
   const next: AppState = {
     ...state,
