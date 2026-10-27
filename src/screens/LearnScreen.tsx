@@ -97,7 +97,7 @@ export function LearnScreen({ onHome }: { onHome: () => void }) {
           key={`${q.uid}-${pos}`}
           q={q}
           mode="learn"
-          speechRate={state.settings.speechRate}
+          speech={{ rate: state.settings.speechRate, voiceURI: state.settings.voiceURI }}
           extraSolution={(() => {
             const v = unit.vocab.find((x) => x.id === key.split('|')[0]);
             return v ? `${v.en} = ${v.de}${v.example ? ` · ${v.example}` : ''}` : undefined;

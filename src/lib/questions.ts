@@ -39,8 +39,8 @@ export interface McQuestion extends Base {
   prompt: string;
   options: string[];
   answer: string;
-  /** Text read aloud by the speaker button (listening tasks). */
-  speak?: string;
+  /** Parts read aloud by the speaker button (listening tasks). */
+  speak?: string[];
 }
 
 export interface TypeQuestion extends Base {
@@ -49,7 +49,7 @@ export interface TypeQuestion extends Base {
   /** Small context line under the prompt (e.g. for German "sie"). */
   context?: string;
   accepted: string[];
-  speak?: string;
+  speak?: string[];
   /** Letters shown for "Buchstabensalat". */
   letters?: string[];
   /** Text shown after answering, e.g. the full sentence. */
@@ -255,9 +255,9 @@ export function vocabTypeDeEn(v: VocabItem): TypeQuestion {
   };
 }
 
-/** Text spoken in dictation: word, example sentence, word. */
-export function dictationText(v: VocabItem): string {
-  return v.example ? `${v.en}. ... ${v.example} ... ${v.en}.` : `${v.en}. ... ${v.en}.`;
+/** Parts spoken in dictation, one after the other: word, example sentence, word. */
+export function dictationText(v: VocabItem): string[] {
+  return v.example ? [v.en, v.example, v.en] : [v.en, v.en];
 }
 
 export function vocabDictation(v: VocabItem): TypeQuestion {

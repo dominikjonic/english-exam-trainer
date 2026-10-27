@@ -2,7 +2,7 @@ import { useState, type FormEvent } from 'react';
 import { unit2 } from '../data/unit2';
 import type { GrammarTopic, Topic, Unit, VocabItem } from '../data/types';
 import { GRADE_NAMES, validThresholds, type GradeThresholds } from '../lib/grading';
-import { speak } from '../lib/speech';
+import { VoiceSettings } from '../components/VoiceSettings';
 import { defaultState, loadState, useStore } from '../lib/store';
 import type { AppState, ExamResult } from '../lib/types';
 import { MistakeList, TOPIC_NAMES } from './ResultScreen';
@@ -536,7 +536,7 @@ function SettingsTab() {
       </section>
 
       <section>
-        <h3>Lernmodus und Vorlesen</h3>
+        <h3>Lernmodus</h3>
         <label className="inline">
           Dauer einer Lernrunde:{' '}
           <input
@@ -549,20 +549,11 @@ function SettingsTab() {
           />{' '}
           Minuten
         </label>
-        <label className="inline">
-          Sprechtempo:{' '}
-          <input
-            type="range"
-            min={0.5}
-            max={1.2}
-            step={0.05}
-            value={state.settings.speechRate}
-            onChange={(e) => update((s) => ({ ...s, settings: { ...s.settings, speechRate: Number(e.target.value) } }))}
-          />{' '}
-          <button className="btn small" onClick={() => speak('The parrot is next to the monkeys.', state.settings.speechRate)}>
-            🔊 Testen
-          </button>
-        </label>
+      </section>
+
+      <section>
+        <h3>Stimme fürs Hördiktat</h3>
+        <VoiceSettings />
       </section>
 
       <section>

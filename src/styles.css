@@ -1022,3 +1022,36 @@ h2 {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+.voice-select {
+  font: inherit;
+  padding: 6px 8px;
+  border-radius: 8px;
+  max-width: 100%;
+}
+
+.inline.wrap {
+  flex-wrap: wrap;
+}
+
+.voice-help {
+  background: #f6f9f7;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 8px 12px;
+  width: 100%;
+}
+
+.voice-help.open-warn {
+  background: #fff8e6;
+  border-color: var(--accent);
+}
+
+.voice-help summary {
+  cursor: pointer;
+  font-weight: 600;
+}
+
+.voice-help li {
+  margin: 4px 0;
+}

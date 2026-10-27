@@ -208,7 +208,7 @@ export function ExamScreen({ onFinish, onCancel }: { onFinish: (r: ExamResult) =
         key={q.uid}
         q={q}
         mode="exam"
-        speechRate={state.settings.speechRate}
+        speech={{ rate: state.settings.speechRate, voiceURI: state.settings.voiceURI }}
         onGraded={(g) => {
           currentGraded.current = true;
           answered.current.push({ partId: part.id, q, g });

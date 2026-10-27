@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, type FormEvent } from 'react';
 import { gradeQuestion, kindLabel, type Graded, type Question, type Response } from '../lib/questions';
-import { canSpeak, speak, stopSpeaking } from '../lib/speech';
+import { canSpeak, speak, stopSpeaking, type SpeakOptions } from '../lib/speech';
 import { Diff } from './Diff';
 import { ScenePicture } from './ScenePicture';
 
@@ -8,7 +8,7 @@ interface Props {
   q: Question;
   /** "exam": no help. "learn": shows the example sentence after answering. */
   mode: 'exam' | 'learn';
-  speechRate: number;
+  speech: SpeakOptions;
   onGraded: (g: Graded) => void;
   onNext: () => void;
   extraSolution?: string;
@@ -16,7 +16,7 @@ interface Props {
 
 const MAX_PLAYS_EXAM = 3;
 
-export function QuestionView({ q, mode, speechRate, onGraded, onNext, extraSolution }: Props) {
+export function QuestionView({ q, mode, speech, onGraded, onNext, extraSolution }: Props) {
   const [graded, setGraded] = useState<Graded | null>(null);
   const [response, setResponse] = useState<Response>(null);
   const nextRef = useRef<HTMLButtonElement>(null);
@@ -39,7 +39,7 @@ export function QuestionView({ q, mode, speechRate, onGraded, onNext, extraSolut
       <div className="q-kind">{kindLabel(q)}</div>
       <p className="q-instruction">{q.instruction}</p>
       {q.picture && <ScenePicture scene={q.picture} />}
-      <Body q={q} graded={graded} response={response} submit={submit} mode={mode} speechRate={speechRate} />
+      <Body q={q} graded={graded} response={response} submit={submit} mode={mode} speech={speech} />
       {graded && (
         <Feedback q={q} g={graded} mode={mode} extraSolution={extraSolution}>
           <button ref={nextRef} className="btn primary" onClick={onNext}>
@@ -57,7 +57,7 @@ interface BodyProps {
   response: Response;
   submit: (r: Response) => void;
   mode: 'exam' | 'learn';
-  speechRate: number;
+  speech: SpeakOptions;
 }
 
 function Body(props: BodyProps) {
@@ -78,10 +78,10 @@ function Body(props: BodyProps) {
   }
 }
 
-function SpeakButton({ text, rate, limit }: { text: string; rate: number; limit?: number }) {
+function SpeakButton({ text, options, limit }: { text: string[]; options: SpeakOptions; limit?: number }) {
   const [plays, setPlays] = useState(0);
   const play = () => {
-    speak(text, rate);
+    speak(text, options);
     setPlays((n) => n + 1);
   };
   useEffect(() => {
@@ -117,7 +117,7 @@ function McBody({ q, graded, response, submit }: BodyProps & { q: Extract<Questi
   );
 }
 
-function TypeBody({ q, graded, submit, mode, speechRate }: BodyProps & { q: Extract<Question, { kind: 'type' }> }) {
+function TypeBody({ q, graded, submit, mode, speech }: BodyProps & { q: Extract<Question, { kind: 'type' }> }) {
   const [value, setValue] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
   useEffect(() => inputRef.current?.focus(), []);
@@ -128,7 +128,7 @@ function TypeBody({ q, graded, submit, mode, speechRate }: BodyProps & { q: Extr
   return (
     <form onSubmit={onSubmit}>
       {q.speak ? (
-        <SpeakButton text={q.speak} rate={speechRate} limit={mode === 'exam' ? MAX_PLAYS_EXAM : undefined} />
+        <SpeakButton text={q.speak} options={speech} limit={mode === 'exam' ? MAX_PLAYS_EXAM : undefined} />
       ) : (
         <p className="q-prompt">{q.prompt}</p>
       )}

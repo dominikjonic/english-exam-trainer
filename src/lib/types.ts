@@ -43,6 +43,8 @@ export interface Settings {
   thresholds: GradeThresholds;
   pin: string | null;
   speechRate: number;
+  /** Chosen English voice; null picks the best available one. */
+  voiceURI: string | null;
   learnMinutes: number;
 }
 
