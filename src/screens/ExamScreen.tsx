@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { MemoryGame } from '../components/MemoryGame';
+import { MiniGames } from '../components/MiniGames';
 import { QuestionView } from '../components/QuestionView';
 import { bossRound, buildPart, EXAM_MINUTES, EXAM_PARTS, type ExamContext, type Mistake } from '../lib/exam';
 import { gradeQuestion, kindLabel, type Graded, type Question } from '../lib/questions';
@@ -184,7 +184,7 @@ export function ExamScreen({ onFinish, onCancel }: { onFinish: (r: ExamResult) =
       <div className="screen">
         {header}
         <h2>Kurze Pause 🌴</h2>
-        <MemoryGame />
+        <MiniGames xp={state.xp} vocab={unit.vocab} />
         <button className="btn primary" onClick={() => goToPart(phase.part + 1)}>
           Pause beenden
         </button>

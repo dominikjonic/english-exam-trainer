@@ -1,3 +1,4 @@
+import { GameGallery } from '../components/MiniGames';
 import { boxCounts, dueCards } from '../lib/leitner';
 import { BADGES, goalStreak, levelFor, levelName, xpForLevel } from '../lib/rewards';
 import { activeUnit, useStore } from '../lib/store';
@@ -106,6 +107,10 @@ export function HomeScreen({ go }: { go: (screen: 'exam' | 'learn' | 'parent') =
           </div>
         ))}
       </div>
+
+      <h2>Pausen-Spiele</h2>
+      <p className="muted small">Mit deinen XP schaltest du neue Spiele für die Pause in der Prüfung frei. Die XP bleiben dir dabei erhalten.</p>
+      <GameGallery xp={state.xp} />
 
       <footer className="footer">
         <button className="btn small" onClick={() => go('parent')}>

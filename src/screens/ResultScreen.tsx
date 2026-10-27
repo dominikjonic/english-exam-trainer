@@ -1,6 +1,7 @@
 import { Diff } from '../components/Diff';
 import { GRADE_NAMES } from '../lib/grading';
 import { BADGES, goalStreak, meetsGoal } from '../lib/rewards';
+import { newlyUnlocked } from '../lib/minigames';
 import { useStore } from '../lib/store';
 import type { ExamResult, Stat } from '../lib/types';
 
@@ -39,6 +40,7 @@ export function ResultScreen({ result, onHome }: { result: ExamResult; onHome: (
   const goal = meetsGoal(result, t);
   const enDe = pct(result.dirStats['en-de']);
   const deEn = pct(result.dirStats['de-en']);
+  const unlocked = newlyUnlocked(state.xp - result.xp, state.xp);
   return (
     <div className="screen">
       <h1>Auswertung</h1>
@@ -99,6 +101,11 @@ export function ResultScreen({ result, onHome }: { result: ExamResult; onHome: (
               </div>
             ) : null;
           })}
+          {unlocked.map((g) => (
+            <div key={g.id} className="badge new">
+              {g.emoji} <b>Neues Pausen-Spiel:</b> {g.title}
+            </div>
+          ))}
         </div>
       </div>
 
