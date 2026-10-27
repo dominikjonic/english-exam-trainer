@@ -31,7 +31,7 @@ export interface ExamResult {
   grade: Grade;
   durationSec: number;
   parts: { id: string; title: string; points: number; max: number }[];
-  dirStats: { 'en-de': Stat; 'de-en': Stat; listen: Stat };
+  dirStats: { 'en-de': Stat; 'de-en': Stat };
   topicStats: Record<Topic, Stat>;
   spellingErrors: number;
   mistakes: MistakeRecord[];
@@ -42,7 +42,6 @@ export interface ExamResult {
 export interface Settings {
   thresholds: GradeThresholds;
   pin: string | null;
-  speechRate: number;
   learnMinutes: number;
 }
 

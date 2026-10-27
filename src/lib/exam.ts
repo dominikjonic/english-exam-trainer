@@ -24,7 +24,6 @@ import {
   thereScene,
   thereType,
   vocabBuild,
-  vocabDictation,
   vocabMatch,
   vocabMcDeEn,
   vocabMcEnDe,
@@ -47,7 +46,7 @@ export interface PartPlan {
 
 export const EXAM_PARTS: PartPlan[] = [
   { id: 'warmup', title: 'Aufwärmen', subtitle: 'Multiple Choice Englisch → Deutsch', minutes: 5, from: 0 },
-  { id: 'A', title: 'Teil A: Vokabeln', subtitle: 'Deutsch → Englisch schreiben und Hördiktat', minutes: 10, from: 5 },
+  { id: 'A', title: 'Teil A: Vokabeln', subtitle: 'Deutsch → Englisch schreiben und Buchstabensalat', minutes: 10, from: 5 },
   { id: 'B', title: 'Teil B: Pronomen', subtitle: 'Lückentexte und Satzteile ersetzen', minutes: 10, from: 15 },
   { id: 'pause', title: 'Pause', subtitle: 'Mini-Spiel ohne Wertung', minutes: 3, from: 25 },
   { id: 'C', title: 'Teil C: Präpositionen', subtitle: 'Bildaufgaben und there is / there are', minutes: 10, from: 28 },
@@ -88,10 +87,9 @@ function warmup(ctx: ExamContext): Question[] {
 }
 
 function partA(ctx: ExamContext): Question[] {
-  const typed = pickVocab(ctx, 8).map(vocabTypeDeEn);
-  const dictation = pickVocab(ctx, 4).map(vocabDictation);
-  const scramble = pickVocab(ctx, 2, canScramble).map(vocabScramble);
-  return arrange([...typed, ...dictation, ...scramble]);
+  const typed = pickVocab(ctx, 10).map(vocabTypeDeEn);
+  const scramble = pickVocab(ctx, 4, canScramble).map(vocabScramble);
+  return arrange([...typed, ...scramble]);
 }
 
 /** Vocabulary mix used when a unit has no grammar module for part B or C. */
@@ -154,7 +152,6 @@ export function retryQuestion(itemKey: string, previousKind: string, unit: Unit)
     return different([
       () => vocabTypeDeEn(v),
       () => vocabMcEnDe(v, unit.vocab),
-      () => vocabDictation(v),
       () => vocabScramble(v),
       () => vocabMcDeEn(v, unit.vocab),
     ]);
@@ -206,7 +203,7 @@ export function bossRound(unit: Unit, mistakes: Mistake[], weak: WeakMap): Quest
   const fillers: (() => Question)[] = [
     () => vocabMcEnDe(pickVocab(ctx, 1)[0], unit.vocab),
     () => vocabTypeDeEn(pickVocab(ctx, 1)[0]),
-    () => vocabDictation(pickVocab(ctx, 1)[0]),
+    () => vocabMcDeEn(pickVocab(ctx, 1)[0], unit.vocab),
   ];
   if (unit.grammar.includes('pronouns')) {
     fillers.push(() => pronGapType(pick(gapsFor())), () => pronReplaceType(pick(replacesFor())));

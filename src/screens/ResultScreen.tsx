@@ -19,7 +19,7 @@ export function MistakeList({ result }: { result: ExamResult }) {
             {m.spelling ? ' · Rechtschreibung' : ''}
           </div>
           <div>{m.prompt}</div>
-          {m.kind === 'Selbst schreiben' || m.kind === 'Hördiktat' || m.kind === 'Buchstabensalat' ? (
+          {m.kind === 'Selbst schreiben' || m.kind === 'Buchstabensalat' ? (
             <Diff given={m.given} expected={m.expected} letters={m.spelling} />
           ) : (
             <div className="small">
@@ -39,7 +39,6 @@ export function ResultScreen({ result, onHome }: { result: ExamResult; onHome: (
   const goal = meetsGoal(result, t);
   const enDe = pct(result.dirStats['en-de']);
   const deEn = pct(result.dirStats['de-en']);
-  const listen = pct(result.dirStats.listen);
   return (
     <div className="screen">
       <h1>Auswertung</h1>
@@ -81,10 +80,6 @@ export function ResultScreen({ result, onHome }: { result: ExamResult; onHome: (
               <tr>
                 <td>Deutsch → Englisch</td>
                 <td className="num">{deEn ?? '–'} %</td>
-              </tr>
-              <tr>
-                <td>Hördiktat</td>
-                <td className="num">{listen ?? '–'} %</td>
               </tr>
               <tr>
                 <td>Rechtschreibfehler</td>

@@ -16,7 +16,7 @@ export function defaultState(): AppState {
     xp: 0,
     badges: {},
     learnDays: [],
-    settings: { thresholds: { ...DEFAULT_THRESHOLDS }, pin: null, speechRate: 0.85, learnMinutes: 10 },
+    settings: { thresholds: { ...DEFAULT_THRESHOLDS }, pin: null, learnMinutes: 10 },
   };
 }
 

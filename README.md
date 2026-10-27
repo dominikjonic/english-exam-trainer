@@ -14,8 +14,7 @@ npm run dev
 ```
 
 Die App läuft dann unter http://localhost:5173. Alles bleibt lokal im Browser gespeichert
-(kein Konto, kein Server). Für den Hördiktat-Teil braucht der Browser eine englische
-Stimme; Chrome, Edge und Safari haben sie meistens schon.
+(kein Konto, kein Server).
 
 Für eine fertige Version ohne Entwicklungsserver: `npm run build`, danach `npm run preview`.
 
@@ -26,7 +25,7 @@ Für eine fertige Version ohne Entwicklungsserver: `npm run build`, danach `npm 
 | Zeit | Teil | Inhalt |
 | --- | --- | --- |
 | 0–5 | Aufwärmen | Multiple Choice Englisch → Deutsch, Zuordnen, Richtig/Falsch |
-| 5–15 | Teil A: Vokabeln | Deutsch → Englisch schreiben, Hördiktat, Buchstabensalat |
+| 5–15 | Teil A: Vokabeln | Deutsch → Englisch schreiben, Buchstabensalat |
 | 15–25 | Teil B: Pronomen | Lückentexte, Satzteile ersetzen („Tom and I“ → we), Sätze bauen |
 | 25–28 | Pause | Memory-Spiel ohne Wertung |
 | 28–38 | Teil C: Präpositionen | Bildaufgaben (Wo ist die Katze?), there is / there are |
@@ -52,7 +51,7 @@ in beide Richtungen. Falsche Wörter aus der Prüfung landen automatisch in Fach
 - Ergebnisse jeder Prüfung mit Datum, Note, beiden Richtungen und Fehlerliste
 - Fehlerstatistik nach Thema (Vokabeln, Pronomen, Präpositionen, Rechtschreibung), Verlauf, häufigste Fehler
 - Vokabeln bearbeiten und neue Units für den nächsten Stoff anlegen
-- Notengrenzen anpassen (Standard: 1 ab 90 %, 2 ab 80 %, 3 ab 65 %, 4 ab 50 %), Länge der Lernrunde, Sprechtempo
+- Notengrenzen anpassen (Standard: 1 ab 90 %, 2 ab 80 %, 3 ab 65 %, 4 ab 50 %), Länge der Lernrunde
 - Sicherung herunterladen und auf einem anderen Computer wieder laden
 
 ## Für Entwickler

@@ -14,7 +14,7 @@ import type { Preposition, Pronoun, PronounGap, PronounReplace, Topic, VocabItem
 import { isSpellingSlip, matchesAny, normalize } from './answer';
 import { pick, sample, shuffle, uid } from './random';
 
-export type Direction = 'en-de' | 'de-en' | 'listen';
+export type Direction = 'en-de' | 'de-en';
 
 export interface Scene {
   object: SceneObject;
@@ -39,8 +39,6 @@ export interface McQuestion extends Base {
   prompt: string;
   options: string[];
   answer: string;
-  /** Text read aloud by the speaker button (listening tasks). */
-  speak?: string;
 }
 
 export interface TypeQuestion extends Base {
@@ -49,7 +47,6 @@ export interface TypeQuestion extends Base {
   /** Small context line under the prompt (e.g. for German "sie"). */
   context?: string;
   accepted: string[];
-  speak?: string;
   /** Letters shown for "Buchstabensalat". */
   letters?: string[];
   /** Text shown after answering, e.g. the full sentence. */
@@ -110,10 +107,9 @@ export interface Graded {
 export function kindLabel(q: Question): string {
   switch (q.kind) {
     case 'mc':
-      return q.speak ? 'Hören' : 'Multiple Choice';
+      return 'Multiple Choice';
     case 'type':
       if (q.letters) return 'Buchstabensalat';
-      if (q.speak) return 'Hördiktat';
       return 'Selbst schreiben';
     case 'tf':
       return 'Richtig oder falsch';
@@ -252,26 +248,6 @@ export function vocabTypeDeEn(v: VocabItem): TypeQuestion {
     context: g.context,
     accepted: accepted(v),
     solution: v.example,
-  };
-}
-
-/** Text spoken in dictation: word, example sentence, word. */
-export function dictationText(v: VocabItem): string {
-  return v.example ? `${v.en}. ... ${v.example} ... ${v.en}.` : `${v.en}. ... ${v.en}.`;
-}
-
-export function vocabDictation(v: VocabItem): TypeQuestion {
-  return {
-    uid: uid(),
-    kind: 'type',
-    topic: 'vocab',
-    itemKey: vocabKey(v),
-    dir: 'listen',
-    instruction: 'Hör gut zu und schreib das Wort.',
-    prompt: '🔊 Hördiktat',
-    accepted: accepted(v),
-    speak: dictationText(v),
-    solution: `${v.en} = ${v.de}`,
   };
 }
 
