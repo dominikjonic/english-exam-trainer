@@ -1,5 +1,6 @@
 import './crew.css';
 import { GameGallery } from '../components/MiniGames';
+import type { MiniGameInfo } from '../lib/minigames';
 import { Hero } from '../components/hero/Hero';
 import { gold, HEROES, item } from '../lib/pirates';
 import { boxCounts, dueCards } from '../lib/leitner';
@@ -7,7 +8,14 @@ import { BADGES, goalStreak, levelFor, levelName, xpForLevel } from '../lib/rewa
 import { activeUnit, useStore } from '../lib/store';
 import { BoxBar } from './LearnScreen';
 
-export function HomeScreen({ go }: { go: (screen: 'exam' | 'learn' | 'parent' | 'crew') => void }) {
+export function HomeScreen({
+  go,
+  play,
+}: {
+  go: (screen: 'exam' | 'learn' | 'parent' | 'crew') => void;
+  /** Opens the arcade, optionally with a game already picked. */
+  play: (game?: MiniGameInfo) => void;
+}) {
   const { state, update } = useStore();
   const unit = activeUnit(state);
   const level = levelFor(state.xp);
@@ -140,9 +148,16 @@ export function HomeScreen({ go }: { go: (screen: 'exam' | 'learn' | 'parent' | 
         ))}
       </div>
 
-      <h2>Pausen-Spiele</h2>
-      <p className="muted small">Mit deinen XP schaltest du neue Spiele für die Pause in der Prüfung frei. Die XP bleiben dir dabei erhalten.</p>
-      <GameGallery xp={state.xp} />
+      <div className="exam-header">
+        <h2>🎮 Spielhalle</h2>
+        <button className="btn small" onClick={() => play()}>
+          Spielhalle öffnen
+        </button>
+      </div>
+      <p className="muted small">
+        Mit deinen XP schaltest du neue Spiele frei. Du kannst sie in der Prüfungspause oder hier jederzeit einfach so spielen. Die XP bleiben dir dabei erhalten.
+      </p>
+      <GameGallery xp={state.xp} onPick={play} />
 
       <footer className="footer">
         <button className="btn small" onClick={() => go('parent')}>
