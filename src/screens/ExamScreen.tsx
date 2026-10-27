@@ -2,7 +2,8 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { MiniGames } from '../components/MiniGames';
 import { QuestionView } from '../components/QuestionView';
 import { bossRound, buildPart, EXAM_MINUTES, EXAM_PARTS, retryQuestion, type ExamContext, type Mistake } from '../lib/exam';
-import { perksOf } from '../lib/pirates';
+import { Hero } from '../components/hero/Hero';
+import { HEROES, perksOf } from '../lib/pirates';
 import { gradeQuestion, kindLabel, type Graded, type Question } from '../lib/questions';
 import { finishExam, type Answered } from '../lib/results';
 import { activeUnit, useStore } from '../lib/store';
@@ -23,6 +24,7 @@ export function ExamScreen({ onFinish, onCancel }: { onFinish: (r: ExamResult) =
   const answered = useRef<Answered[]>([]);
   const currentGraded = useRef(false);
   // Second-chance perk: extra questions left in this exam, and which tasks are extra ones.
+  const hero = HEROES.find((h) => h.id === state.heroId);
   const perks = useMemo(() => perksOf(state.equipped), []);
   const chancesLeft = useRef(perks.secondChances);
   const bonusIds = useRef(new Set<string>());
@@ -115,6 +117,9 @@ export function ExamScreen({ onFinish, onCancel }: { onFinish: (r: ExamResult) =
             <li>Keine Hilfen. Der Timer läuft sichtbar mit.</li>
             <li>Rechtschreibung zählt: Ein Tippfehler ist ein Fehler. Danach siehst du den Unterschied.</li>
             <li>Wenn die Zeit für einen Teil um ist, geht es automatisch weiter.</li>
+            {perks.secondChances > 0 && <li>🎩 Dein Hut: {perks.secondChances} Zusatzfrage(n) nach einer falschen Antwort.</li>}
+            {perks.extraMinutes > 0 && <li>🧭 Dein Mantel: +{perks.extraMinutes} Minute(n) pro Teil.</li>}
+            {perks.xpFactor > 1 && <li>🦜 Dein Papagei: +{Math.round((perks.xpFactor - 1) * 100)} % XP und Gold.</li>}
           </ul>
         </div>
         <div className="row">
@@ -174,6 +179,11 @@ export function ExamScreen({ onFinish, onCancel }: { onFinish: (r: ExamResult) =
       <div className="screen">
         {header}
         <div className="part-intro">
+          {hero && (
+            <div className="intro-hero">
+              <Hero hero={hero} equipped={state.equipped} entrance lines={['Du schaffst das!', 'Konzentriert bleiben!', 'Auf geht’s!']} />
+            </div>
+          )}
           <h2>{part.title}</h2>
           <p>{part.subtitle}</p>
           <p className="muted">Zeit: {part.minutes} Minuten</p>

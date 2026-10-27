@@ -1,4 +1,8 @@
 import { Diff } from '../components/Diff';
+import { Confetti } from '../components/hero/Confetti';
+import { Hero } from '../components/hero/Hero';
+import { HEROES } from '../lib/pirates';
+import '../screens/crew.css';
 import { GRADE_NAMES } from '../lib/grading';
 import { BADGES, goalStreak, meetsGoal } from '../lib/rewards';
 import { newlyUnlocked } from '../lib/minigames';
@@ -41,9 +45,25 @@ export function ResultScreen({ result, onHome }: { result: ExamResult; onHome: (
   const enDe = pct(result.dirStats['en-de']);
   const deEn = pct(result.dirStats['de-en']);
   const unlocked = newlyUnlocked(state.xp - result.xp, state.xp);
+  const hero = HEROES.find((h) => h.id === state.heroId);
+  const cheer = result.grade === 1 ? ['Sehr gut! Yo-ho-ho!', 'Ein echter Kapitän!'] : result.grade === 2 ? ['Gut gemacht!', 'Fast perfekt!'] : ['Weiter so!', 'Nächstes Mal mehr!'];
   return (
     <div className="screen">
+      {result.grade <= 2 && <Confetti />}
       <h1>Auswertung</h1>
+      {hero && (
+        <div className="home-hero result-hero">
+          <div className="home-hero-figure">
+            <Hero hero={hero} equipped={state.equipped} entrance lines={cheer} />
+          </div>
+          <div className="home-hero-info">
+            <h2>{cheer[0]}</h2>
+            <div className="coin-pill">
+              +{result.xp} XP · <span className="coin" aria-hidden="true" /> +{result.xp} Gold
+            </div>
+          </div>
+        </div>
+      )}
       <div className={`grade-card grade-${result.grade}`}>
         <div className="grade-number">{result.grade}</div>
         <div>

@@ -1,10 +1,13 @@
+import './crew.css';
 import { GameGallery } from '../components/MiniGames';
+import { Hero } from '../components/hero/Hero';
+import { gold, HEROES, item } from '../lib/pirates';
 import { boxCounts, dueCards } from '../lib/leitner';
 import { BADGES, goalStreak, levelFor, levelName, xpForLevel } from '../lib/rewards';
 import { activeUnit, useStore } from '../lib/store';
 import { BoxBar } from './LearnScreen';
 
-export function HomeScreen({ go }: { go: (screen: 'exam' | 'learn' | 'parent') => void }) {
+export function HomeScreen({ go }: { go: (screen: 'exam' | 'learn' | 'parent' | 'crew') => void }) {
   const { state, update } = useStore();
   const unit = activeUnit(state);
   const level = levelFor(state.xp);
@@ -13,6 +16,7 @@ export function HomeScreen({ go }: { go: (screen: 'exam' | 'learn' | 'parent') =
   const due = dueCards(unit.vocab, state.decks[unit.id] ?? {}).length;
   const own = state.results.filter((r) => r.unitId === unit.id);
   const best = own.reduce<(typeof own)[number] | null>((b, r) => (!b || r.percent > b.percent ? r : b), null);
+  const hero = HEROES.find((h) => h.id === state.heroId);
   const streak = goalStreak(state.results, unit.id, state.settings.thresholds, state.settings.goalWithBonus);
 
   return (
@@ -53,6 +57,34 @@ export function HomeScreen({ go }: { go: (screen: 'exam' | 'learn' | 'parent') =
           </div>
         </div>
       </header>
+
+      <div className="home-hero">
+        {hero ? (
+          <button className="home-hero-figure" onClick={() => go('crew')} aria-label="Crew und Shop öffnen">
+            <Hero hero={hero} equipped={state.equipped} entrance lines={[`Ahoi! Ich bin ${hero.name}.`, 'Auf zur Prüfung!', 'Yo-ho-ho!']} />
+          </button>
+        ) : (
+          <div className="home-hero-empty">🏴‍☠️</div>
+        )}
+        <div className="home-hero-info">
+          <h2>{hero ? `${hero.name}, ${hero.role}` : 'Deine Piraten-Crew'}</h2>
+          <div className="coin-pill">
+            <span className="coin" aria-hidden="true" /> {gold(state)} Gold
+          </div>
+          {hero && (
+            <p className="small">
+              {[state.equipped.hat, state.equipped.coat, state.equipped.pet]
+                .map((id) => item(id))
+                .filter((it) => it && it.cost > 0)
+                .map((it) => `${it!.emoji} ${it!.perkText}`)
+                .join(' · ') || 'Noch keine Fähigkeiten. Kauf Skins im Shop!'}
+            </p>
+          )}
+          <button className="btn primary" onClick={() => go('crew')}>
+            {hero ? 'Crew & Shop' : 'Helden wählen'}
+          </button>
+        </div>
+      </div>
 
       <div className="actions">
         <button className="action exam" onClick={() => go('exam')}>
