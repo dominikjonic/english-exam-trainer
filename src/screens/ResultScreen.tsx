@@ -65,7 +65,9 @@ export function ResultScreen({ result, onHome }: { result: ExamResult; onHome: (
         </div>
       )}
       <div className={`grade-card grade-${result.grade}`}>
-        <div className="grade-number">{result.grade}</div>
+        <div className="grade-number">
+          <span>{result.grade}</span>
+        </div>
         <div>
           <div className="grade-name">{GRADE_NAMES[result.grade]}</div>
           <div>
